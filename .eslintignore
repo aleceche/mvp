@@ -1,0 +1,3 @@
+client/dist
+jest.config.js
+*.test.js
