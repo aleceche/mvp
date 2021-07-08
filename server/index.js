@@ -17,7 +17,7 @@ function verifyUser(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/login');
+  res.send('Invalid User Credentials');
 }
 
 const app = express();
@@ -36,28 +36,43 @@ app.use(passport.session());
 
 // GET
 app.get('/login', (req, res) => {
-  res.send('hi');
+  res.send('Invalid User Credentials');
 });
 
 app.get('/dashboard', verifyUser, (req, res) => {
-  res.status(200).send(req.user);
+  res.status(200).send(req.user.username);
 });
 
-app.get('/standings', (req, res) => {
-  // const { team } = req.query;
-  mlbStats.getStandings()
-    .then((results) => {
-      console.log(results);
-      res.status(200).send(results.data);
-    })
-    .catch((err) => res.status(404).send(err));
+app.get('/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
 });
+
+app.get('/:user/favoriteTeam', (req, res) => {
+  const { user } = req.params;
+  User.findOne({ where: { username: user } })
+    .then((results) => {
+      return Team.findOne({ where: { id: results.dataValues.favoriteTeam } });
+    })
+    .then((team) => res.status(200).send(team.name))
+    .catch((err) => res.send('No favorite team set'));
+});
+
+// app.get('/standings', (req, res) => {
+//   // const { team } = req.query;
+//   mlbStats.getStandings()
+//     .then((results) => {
+//       console.log(results);
+//       res.status(200).send(results.data);
+//     })
+//     .catch((err) => res.status(404).send(err));
+// });
 
 // POST
 
 // LOGIN
 app.post('/login', passport.authenticate('local', {
-  successRedirect: '/',
+  successRedirect: '/dashboard',
   failureRedirect: '/login',
   successFlash: 'Welcome!',
   failureFlash: true,
