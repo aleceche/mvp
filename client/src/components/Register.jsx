@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 
 const Register = () => {
+  const [created, setCreated] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -23,10 +24,11 @@ const Register = () => {
       url: 'http://localhost:6969/register',
     })
       .then(() => {
-        // e.target.reset();
+        e.target.reset();
+        setCreated(true);
       });
   };
-  return (
+  return !created ? (
     <div id="register">
       <form onSubmit={login}>
         <div className="header">
@@ -55,7 +57,7 @@ const Register = () => {
         </div>
       </form>
     </div>
-  );
+  ) : <Redirect to="/login" />;
 };
 
 export default Register;

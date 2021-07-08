@@ -51,11 +51,9 @@ app.get('/logout', (req, res) => {
 app.get('/:user/favoriteTeam', (req, res) => {
   const { user } = req.params;
   User.findOne({ where: { username: user } })
-    .then((results) => {
-      return Team.findOne({ where: { id: results.dataValues.favoriteTeam } });
-    })
-    .then((team) => res.status(200).send(team.name))
-    .catch((err) => res.send('No favorite team set'));
+    .then((results) => Team.findOne({ where: { id: results.dataValues.favoriteTeam } }))
+    .then((team) => res.status(200).send(team))
+    .catch(() => res.send('No favorite team set'));
 });
 
 // app.get('/standings', (req, res) => {
@@ -96,14 +94,14 @@ app.post('/register', (req, res) => {
           .then((salt) => bcrypt.hash(password, salt))
           .then((hash) => {
             const hashedPassword = hash;
-            const user = User.build({
+            const newUser = User.build({
               username,
               password: hashedPassword,
               firstName,
               lastName,
               email,
             });
-            user.save();
+            newUser.save();
           })
           .then(() => res.status(201).redirect('/'))
           .catch((err) => res.status(400).send(err));
