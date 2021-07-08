@@ -36,21 +36,22 @@ const Dashboard = ({ user }) => {
   });
   return username ? (
     <div>
-      <header>
-        {`Hi ${user}`}
+      <header className={favTeam ? favTeam.abbreviation : 'default'}>
+        {user}
         <FavTeam user={user} favTeam={favTeam} setTeam={setTeam} />
-        <br />
         <button type="button" onClick={logout}>Logout</button>
       </header>
-      <section>
-        Show standings (API broken - empty standings)
-      </section>
-      <section>
-        Show players here (API broken - cannot get players)
-      </section>
-      <aside>
-        Show team news here
-      </aside>
+      <div id="dashboard-body" className={favTeam ? favTeam.abbreviation : 'default'}>
+        <section>
+          Show standings (API broken - empty standings)
+        </section>
+        <section>
+          Show players here (API broken - cannot get players)
+        </section>
+        <aside>
+          Show team news here
+        </aside>
+      </div>
     </div>
   ) : null;
 };

@@ -21,9 +21,9 @@ const FavTeam = ({ user, favTeam, setTeam }) => {
       <label htmlFor="teams">
         Favorite Team:
         <select onChange={updateTeam} name="teams">
-          <option value="" selected={favTeam === null} disabled hidden>Select Team</option>
+          <option value="" selected={favTeam === ''} disabled hidden>Select Team</option>
           {teams.map((team) => (
-            <option key={team} selected={favTeam === team}>{team}</option>
+            <option key={team} selected={favTeam ? favTeam.name === team : false}>{team}</option>
           ))}
         </select>
       </label>
