@@ -5,9 +5,11 @@ import AuthContext from '../contexts/AuthContext';
 
 const Login = () => {
   const [loggedIn, setLoggedIn] = useContext(AuthContext);
+  const [badCredentials, setBadCredentials] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const login = () => {
+  const login = (e) => {
+    e.preventDefault();
     axios({
       method: 'post',
       data: {
@@ -18,13 +20,17 @@ const Login = () => {
       url: 'http://localhost:6969/login',
     })
       .then((res) => {
-        console.log(res);
-        if (res.status === 200) { setLoggedIn(true); }
+        if (res.data === 'Invalid User Credentials') {
+          setBadCredentials(true);
+        } else if (res.status === 200) { setLoggedIn(true); }
+      })
+      .finally(() => {
+        e.target.reset();
       });
   };
   return (
     <div id="login">
-      <form>
+      <form onSubmit={login}>
         <div className="header">
           BEISBOL
           <br />
@@ -32,17 +38,36 @@ const Login = () => {
           Sign In
         </div>
         <div className="credentials">
+          {badCredentials ? <div className="red-text">Invalid Login Credentials</div> : <></>}
           <label htmlFor="username">
-            <input type="text" name="username" placeholder="Username" onChange={(e) => setUsername(e.target.value)} />
+            <input
+              type="text"
+              name="username"
+              placeholder="Username"
+              onChange={(e) => {
+                setUsername(e.target.value);
+                if (badCredentials) { setBadCredentials(false); }
+              }}
+              required
+            />
           </label>
           <br />
           <label htmlFor="password">
-            <input type="password" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (badCredentials) { setBadCredentials(false); }
+              }}
+              required
+            />
           </label>
         </div>
         <div className="btns">
           <Link to="/register" className="link">Create account</Link>
-          <button type="button" onClick={login} className="btn">Log In</button>
+          <button type="submit" className="btn">Log In</button>
         </div>
       </form>
     </div>
