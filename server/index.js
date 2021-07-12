@@ -7,6 +7,7 @@ const passport = require('passport');
 const flash = require('connect-flash');
 const path = require('path');
 const MlbStatsAPI = require('mlb-stats-api');
+const NewsAPI = require('newsapi');
 const User = require('../database/user');
 const Team = require('../database/team');
 const initializePassport = require('./passport-config');
@@ -23,6 +24,7 @@ function verifyUser(req, res, next) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 const mlbStats = new MlbStatsAPI();
+const newsapi = new NewsAPI(process.env.newsApiKey);
 
 app.use(express.static(path.join(__dirname, '/../client/dist')));
 app.use(express.json());
@@ -56,15 +58,32 @@ app.get('/:user/favoriteTeam', (req, res) => {
     .catch(() => res.send('No favorite team set'));
 });
 
-// app.get('/standings', (req, res) => {
-//   // const { team } = req.query;
-//   mlbStats.getStandings()
-//     .then((results) => {
-//       console.log(results);
-//       res.status(200).send(results.data);
-//     })
-//     .catch((err) => res.status(404).send(err));
-// });
+app.get('/news/:team', (req, res) => {
+  const { team } = req.params;
+  newsapi.v2.everything({
+    q: team,
+    sources: 'reuters',
+    from: '2021-07-01',
+    language: 'en',
+    sortBy: 'relevancy',
+    page: 1,
+  })
+    .then((response) => {
+      res.send(response.articles.slice(0, 6));
+    })
+    .catch((err) => {
+      res.status(404).send(err);
+    });
+});
+
+app.get('/teams', (req, res) => {
+  // const { team } = req.query;
+  mlbStats.getTeams({ params: { sportId: 1 } })
+    .then((results) => {
+      res.status(200).send(results.data);
+    })
+    .catch((err) => res.status(404).send(err));
+});
 
 // POST
 
