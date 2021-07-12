@@ -21,6 +21,7 @@ db.sync()
       const newTeam = Team.build({
         api_id: team.id,
         name: team.name,
+        clubName: team.clubName,
         abbreviation: team.abbreviation,
         league: team.league.name,
         division: team.division.name,
