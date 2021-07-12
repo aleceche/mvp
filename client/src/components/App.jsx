@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import axios from 'axios';
-// import Home from './Home';
 import Dashboard from './Dashboard';
 import Login from './Login';
 import Register from './Register';
