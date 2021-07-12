@@ -25,6 +25,13 @@ const Teams = db.define('teams', {
       notEmpty: true,
     },
   },
+  clubName: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true,
+    },
+  },
   abbreviation: {
     type: Sequelize.STRING,
     allowNull: false,
